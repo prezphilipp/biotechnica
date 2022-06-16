@@ -1,0 +1,495 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+
+public class mainCode {
+
+	public static void main(String[] args) {
+		
+		Patient pat1 = new Patient();
+		System.out.println("Hello dear " + pat1 );
+	}
+
+	}
+	
+	class Patient{
+
+		private String patientID;
+		private String userName;
+		private String password;
+		private String userL;
+		private String userP;
+		private static int id = 1000;
+		private String passwordConf;
+		public String r1;
+		public String r2;
+
+		
+	public void loginDb() {
+	
+			
+			setDb();
+			overlook();
+			
+		}
+	
+		
+
+		private String setUserL(){
+			Scanner scanner = new Scanner(System.in);
+			
+			System.out.println("Enter your user name: ");
+			String userL = scanner.nextLine();	
+			
+			
+			return userL;
+			
+		}
+		
+		
+		private String setUserP(){
+			Scanner scanner = new Scanner(System.in);
+			
+			System.out.println("Enter your password: ");
+			String userP = scanner.nextLine();
+			
+			
+			return userP;
+		}
+
+	
+			public void setDb() {
+				
+			
+			
+			String url = "jdbc:mysql://localhost:3306/healthcare?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin";
+			String user = "root";
+			String password = "";
+			
+			
+			this.userL = setUserL();
+				
+			
+			try(Connection connection = DriverManager.getConnection(url,user,password)) {
+				
+			
+				
+			
+				
+			
+			String query = "SELECT userIndex FROM patient WHERE userName = '"+ userL +"'";  
+			Statement stat = connection.createStatement();
+			stat.execute(query);	
+			
+			
+			
+			ResultSet rs1 = stat.executeQuery(query); 
+			
+			int colums = rs1.getMetaData().getColumnCount();
+				
+				while(rs1.next()) { 
+					for(int i = 1; i<=colums; i++) 
+				
+						
+
+					
+					r1 = rs1.getString(1);
+					// is it correct that I took 1 here. What about other numbers
+				//	System.out.println(r1);
+		
+				}			
+				
+			
+				rs1.close();
+				stat.close();
+				
+				
+				
+				
+			
+			
+			}catch (SQLException ex) {
+				System.err.print(ex.getMessage());
+			}
+			
+			if (r1 == null) {
+				System.out.println("No account found. Please try again");
+				setDb();
+			}
+			else {
+				setDb2();
+			}
+		
+		}
+			
+		
+			public void setDb2() {
+
+				String url = "jdbc:mysql://localhost:3306/healthcare?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin";
+				String user = "root";
+				String password = "";
+				
+				
+				this.userP = setUserP();
+					
+				
+				try(Connection connection = DriverManager.getConnection(url,user,password)) {
+					
+				
+						
+				
+				String query = "SELECT userIndex FROM patient WHERE password = '"+ userP +"'";
+				Statement stat2 = connection.createStatement();
+				
+				
+				ResultSet rs2 = stat2.executeQuery(query); 
+				
+				int colums = rs2.getMetaData().getColumnCount();		
+
+					while(rs2.next()) { 
+						for(int i = 1; i<=colums; i++) 				
+						
+						
+						r2 = rs2.getString(1);
+					//	System.out.println(r2);						
+	
+					}			
+					
+				
+					rs2.close();
+					stat2.close();
+					
+					
+				
+				
+				}catch (SQLException ex) {
+					System.err.print(ex.getMessage());
+				}
+				
+			}
+
+			
+			public void overlook() {
+				
+				if(r1.equals(r2)) {
+					System.out.println("Login successfull");
+					contact();
+				}
+				else {
+					System.out.println("Combination of username and password doesn't match");
+				}
+			}
+			
+	public void db() {
+		
+		String url = "jdbc:mysql://localhost:3306/healthcare?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin";
+		String user = "root";
+		String password = "";
+		
+		try(Connection connection = DriverManager.getConnection(url,user,password)) {
+
+			
+		//einfï¿½gen
+		String query = "INSERT INTO patient (userName,password) VALUE ('" + userName + "', '"+ passwordConf +"')";
+		Statement stat = connection.createStatement();	
+		stat.execute(query);
+		stat.close();
+		
+		
+			
+		
+			stat.close();
+			
+		
+		
+		} catch (SQLException ex) {
+			System.err.print(ex.getMessage());
+		}
+	
+		
+
+	}
+	
+	public void masterCode() {
+		System.out.println("Here you can get an overview of all existing accounts");
+		System.out.println(" ");
+		
+		String url = "jdbc:mysql://localhost:3306/healthcare?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin";
+		String user = "root";
+		String password = "";
+		
+		try(Connection connection = DriverManager.getConnection(url,user,password)) {
+					
+		
+		//ausgeben
+		String query = "SELECT * FROM patient ORDER BY userIndex ASC";
+		Statement stat = connection.createStatement();
+		ResultSet rs = stat.executeQuery(query); 
+		
+		int colums = rs.getMetaData().getColumnCount();
+		for(int i = 1; i<=colums; i++)  
+			System.out.print(String.format("%-15s",rs.getMetaData().getColumnLabel(i)));
+				
+			System.out.println();
+			System.out.println("-------------------------------------------------");
+			
+			while(rs.next()) { 
+				for(int i = 1; i<=colums; i++) 
+			System.out.print(String.format("%-15s", rs.getString(i)));
+				System.out.println();
+				
+			}			
+			
+		
+			rs.close();
+			stat.close();
+			
+		
+		
+		} catch (SQLException ex) {
+			System.err.print(ex.getMessage());
+		}
+	}
+	
+
+		
+	public Patient() {
+		
+		System.out.println("Biotechnica official homepage");
+		System.out.println(" ");
+		System.out.println("Do you already have an account?");
+		Scanner scanner = new Scanner(System.in);
+		// maybe I can do something here with a boolean
+		String accChoice = scanner.nextLine();
+		if(accChoice.contains("yes") || accChoice.contains("Yes")) {
+			System.out.println("Please proceed with the login");
+			loginDb();
+			
+		}
+		else {System.out.println("\n" + "In order to login you first have to create an account");
+			createAccount();
+		}
+		scanner.close();
+		
+	}
+		
+		public void createAccount() {
+			
+			Scanner scanner = new Scanner(System.in);
+			
+			
+			this.userName = setUserName();
+			
+			this.password = setPassword();
+			
+			this.passwordConf = setPasswordConf();
+						
+			if( getPassword().equals(getPasswordConf())) {
+				System.out.println("Account successfully created");
+				System.out.println("Your user Name is: " + userName);
+				System.out.println("Your password is: " + password);
+				setPatientID();
+				System.out.println("Your patient ID is: " + patientID);
+				db();
+				contact();
+			}
+			else {
+				System.out.println("Confirmation password is not similar" + "\n" + "Try again");
+				this.passwordConf = setPasswordConf();
+				if( getPassword().equals(getPasswordConf())) {
+					System.out.println("Account successfully created");
+					System.out.println("Your user Name is: " + userName);
+					System.out.println("Your password is: " + password);
+					setPatientID();
+					System.out.println("Your patient ID is: " + patientID);
+					System.out.println("\n ");
+					loginDb();
+				}
+				else {
+					System.out.println("Confirmation password is not similar" + "\n" + "Try again");
+					this.passwordConf = setPasswordConf();
+				}
+			}
+			scanner.close();
+			
+		}
+		
+		private String setPatientID() {
+			id++;
+			patientID = "PT" + id;
+			
+			return patientID;
+		}
+		
+		private String setUserName(){
+			Scanner scanner = new Scanner(System.in);
+			
+			System.out.println("Enter your user name: ");
+			String userName = scanner.nextLine();
+			
+			scanner.close();
+			return userName;
+		}
+
+		
+		private String setPassword(){
+			Scanner scanner = new Scanner(System.in);
+			
+			System.out.println("Enter your password: ");
+			String password = scanner.nextLine();
+			
+			scanner.close();
+			return password;
+		}
+		private String getPassword() {
+			return password;
+		}
+		
+		private String setPasswordConf(){
+			Scanner scanner = new Scanner(System.in);
+			
+			System.out.println("Confirm your password: ");
+			String passwordConf = scanner.nextLine();
+			
+			scanner.close();
+			return passwordConf;
+		}
+		private String getPasswordConf() {
+			return passwordConf;
+		}
+		
+		public void loginFailed() {
+			System.out.println("No existing account found");
+			System.out.println(" ");
+			System.out.println("Do you want to try again or create a new account?");
+			
+			Scanner scanner = new Scanner(System.in);
+			System.out.println("Type '1' if you want to login again or '2' if you want to create a new account");
+			
+			int loginChoice = scanner.nextInt();
+			switch(loginChoice) {
+			case 1:
+				loginDb();
+				break;
+			case 2:
+				createAccount();
+				break;
+			}
+			scanner.close();
+		}
+		
+
+		
+		public void contact() {
+			if (userL.contains("Philipp")) {
+				System.out.println(" ");	
+				System.out.println("Hello master Philipp!");		
+				masterCode();
+				logoutOfAcc();
+			}
+			else {			
+			System.out.println("");
+			System.out.println("Which doctor do you want to contact?");
+			System.out.println("Enter the number matching your desired doctor");
+			System.out.println(" ");
+			System.out.println("1) Ugur Sahin " + "\n" + "Field: Treatment of the Covid-19 virus");
+			System.out.println("");
+			System.out.println("2) Sir Alexander Fleming " + "\n" + "Field: Treatment of infectious diseases");
+			System.out.println("");
+			System.out.println("3) Sigmund Freud " + "\n" + "Field: Treatment of mental diseases");
+			System.out.println("");
+			
+			Scanner scanner = new Scanner(System.in);
+			int option = scanner.nextInt();
+			
+			switch(option) {
+			case 1:
+				writeUgur();
+				break;
+			case 2:
+				writeAlexander();
+				break;
+			case 3:
+				writeSigmund();
+				break;
+			}
+			scanner.close();
+			}
+			
+		}
+		
+		public void writeUgur() {
+			System.out.println("Dear Mister Sahin,");
+			
+			Scanner scanner = new Scanner(System.in);
+			String mail = scanner.nextLine();
+			
+			if(mail != null && !mail.isEmpty()) {
+				System.out.println("Thanks for your input. Mister Sahin will soon contact you concerning your issue. He is "
+						+ "probably going to give you a good old Biontech(Comirnaty) vaccination");
+				logoutOfAcc();
+			}
+			scanner.close();
+		}
+		
+		public void writeAlexander() {
+			System.out.println("Dear Mister Fleming,");
+			
+			Scanner scanner = new Scanner(System.in);
+			String mail = scanner.nextLine();
+			
+			if(mail != null && !mail.isEmpty()) {
+				System.out.println("Thanks for your input. Sir Fleming will soon contact you concerning your issue. The"
+						+ "treatment will probably invole penicillin.");
+				logoutOfAcc();
+			}
+			scanner.close();
+		}
+		
+		public void writeSigmund() {
+			System.out.println("Dear Mister Freud,");
+			
+			Scanner scanner = new Scanner(System.in);
+			String mail = scanner.nextLine();
+			
+			if(mail != null && !mail.isEmpty()) {
+				System.out.println("Thanks for your input. Mister Freud will soon contact you concerning your issue. With his prefered"
+						+ " method, the 'Psychoanalysis' he will surely help you.");
+				logoutOfAcc();
+			}
+			scanner.close();
+		}
+		
+		public void logoutOfAcc() {
+			System.out.println("");
+			System.out.println("Do you want to log out?");
+			
+			Scanner scanner = new Scanner(System.in);
+			String logChoice = scanner.nextLine();
+			
+			if(logChoice.contains("yes") || logChoice.contains("Yes") || logChoice.isEmpty()) {
+				ClearConsoleScreen1();
+				System.out.println("Goodbye");
+				
+			}
+			scanner.close();
+		}
+		
+		
+		    public static void ClearConsoleScreen1() {
+		        System.out.print("Everything on the console will cleared");
+		        System.out.print("\033[H\033[2J");
+		        System.out.flush();
+		    }
+		
+
+		
+	}
+
+
+
+
