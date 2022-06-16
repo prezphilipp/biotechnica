@@ -1,0 +1,60 @@
+
+
+import java.sql.*;
+/*
+ * 1. import ----> java.sql
+ * 2. load and register the driver --> com.mysql.jdbc.Driver
+ * 3. create connection
+ * 4. create a statement
+ * 5. execute the query
+ * 6. process the results
+ * 7. close
+ * 
+ */
+
+
+
+
+public class biotechnica {
+
+	public static void main(String[] args) {
+
+		String url = "jdbc:mysql://localhost:3306/healthcare?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Berlin";
+		String user = "root";
+		String password = "";
+		
+		try(Connection connection = DriverManager.getConnection(url,user,password)) {
+			System.out.println("Erfolgreich mit Datenbank verbunden");
+		
+		
+		//ausgeben
+		String query = "SELECT * FROM patient ORDER BY userIndex ASC";
+		Statement stat = connection.createStatement();
+		ResultSet rs = stat.executeQuery(query); 
+		
+		int colums = rs.getMetaData().getColumnCount();
+		for(int i = 1; i<=colums; i++)  
+			System.out.print(String.format("%-15s",rs.getMetaData().getColumnLabel(i)));
+				
+			System.out.println();
+			System.out.println("-------------------------------------------------");
+			
+			while(rs.next()) { 
+				for(int i = 1; i<=colums; i++) 
+			System.out.print(String.format("%-15s", rs.getString(i)));
+				System.out.println();
+				
+			}			
+			
+		
+			rs.close();
+			stat.close();
+			
+		
+		
+		} catch (SQLException ex) {
+			System.err.print(ex.getMessage());
+		}
+	}
+
+}
